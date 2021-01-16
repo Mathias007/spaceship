@@ -87,13 +87,16 @@ body {
 }
 
 .enemy {
+    position: fixed;
     width: var(--size-unit);
     height: var(--size-unit);
     background-image: url("../images/enemy.png");
     animation: move-5-units-X var(--ships-animation-time) steps(5) infinite;
+    z-index: 1;
 }
 
 .enemy--big {
+    position: fixed;
     width: calc(var(--size-unit) * 2);
     height: calc(var(--size-unit) * 2);
     background-image: url("../images/enemy-big.png");
@@ -122,7 +125,6 @@ body {
     height: 24px;
     background-image: url("../images/missile.png");
     background-size: cover;
-
 }
 
 @keyframes move-8-units-X {
