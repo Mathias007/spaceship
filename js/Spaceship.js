@@ -46,7 +46,7 @@ export class Spaceship {
             switch (keyCode) {
                 case 32: //spacja
                     this.#shot();
-                    break;    
+                    break;
                 case 37: // lewa strzałka
                     this.#leftArrow = false;
                     break;
@@ -63,12 +63,12 @@ export class Spaceship {
     };
 
     #whatKey() {
-        if (this.#leftArrow && this.#getPosition() > 0) {
+        if (this.#leftArrow && this.#getPosition() > 12) {
             this.element.style.left = `${
                 parseInt(this.element.style.left, 10) - this.#modifier
             }px`;
         }
-        if (this.#rightArrow && this.#getPosition() < window.innerWidth) {
+        if (this.#rightArrow && this.#getPosition() + 12 < window.innerWidth) {
             this.element.style.left = `${
                 parseInt(this.element.style.left, 10) + this.#modifier
             }px`;
