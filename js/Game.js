@@ -5,6 +5,8 @@ class Game {
     #htmlElements = {
         spaceship: document.querySelector("[data-spaceship]"),
         container: document.querySelector("[data-container]"),
+        score: document.querySelector("[data-score]"),
+        lives: document.querySelector("[data-lives]"),
     };
 
     #ship = new Spaceship(
@@ -13,8 +15,10 @@ class Game {
     );
 
     #enemies = [];
-    #enemiesInterval = null;
+    #lives = null;
+    #score = null;
 
+    #enemiesInterval = null;
     #checkPositionInterval = null;
     #createEnemyInterval = null;
 
@@ -25,6 +29,8 @@ class Game {
 
     #newGame() {
         this.#enemiesInterval = 30;
+        this.#lives = 3;
+        this.#score = 0;
         this.#createEnemyInterval = setInterval(
             () => this.#randomNewEnemy(),
             1000
@@ -41,12 +47,14 @@ class Game {
             ? this.#createNewEnemy(
                   this.#htmlElements.container,
                   this.#enemiesInterval,
-                  "enemy"
+                  "enemy",
+                  "explosion"
               )
             : this.#createNewEnemy(
                   this.#htmlElements.container,
                   this.#enemiesInterval * 2,
                   "enemy--big",
+                  "explosion--big",
                   3
               );
     }
@@ -67,23 +75,67 @@ class Game {
                 left: enemy.element.offsetLeft,
             };
             if (enemyPosition.top > window.innerHeight) {
-                enemy.remove();
+                enemy.explode();
                 enemiesArr.splice(enemyIndex, 1);
+                this.#updateLives();
             }
+            this.#ship.missiles.forEach((missile, missileIndex, missileArr) => {
+                const missilePosition = {
+                    top: missile.element.offsetTop,
+                    right:
+                        missile.element.offsetLeft +
+                        missile.element.offsetWidth,
+                    bottom:
+                        missile.element.offsetTop +
+                        missile.element.offsetHeight,
+                    left: missile.element.offsetLeft,
+                };
+                if (
+                    missilePosition.bottom >= enemyPosition.top &&
+                    missilePosition.top <= enemyPosition.bottom &&
+                    missilePosition.right >= enemyPosition.left &&
+                    missilePosition.left <= enemyPosition.right
+                ) {
+                    enemy.hit();
+                    if (!enemy.lives) {
+                        enemiesArr.splice(enemyIndex, 1);
+                    }
+                    missile.remove();
+                    missileArr.splice(missileIndex, 1);
+                    this.#updateScore();
+                }
+                if (missilePosition.bottom < 0) {
+                    missile.remove();
+                    missileArr.splice(missileIndex, 1);
+                }
+            });
         });
-        this.#ship.missiles.forEach((missile, missileIndex, missileArr) => {
-            const missilePosition = {
-                top: missile.element.offsetTop,
-                right: missile.element.offsetLeft + missile.element.offsetWidth,
-                bottom:
-                    missile.element.offsetTop + missile.element.offsetHeight,
-                left: missile.element.offsetLeft,
-            };
-            if (missilePosition.bottom < 0) {
-                missile.remove();
-                missileArr.splice(missileIndex, 1);
-            }
-        });
+    }
+
+    #updateScore() {
+        this.#score++;
+        if (!(this.#score % 5)) {
+            this.#enemiesInterval--;
+        }
+        this.#updateScoreText();
+    }
+
+    #updateScoreText() {
+        this.#htmlElements.score.textContent = `Score: ${this.#score}`;
+    }
+
+    #updateLives() {
+        this.#lives--;
+        this.#updateLivesText();
+        this.#htmlElements.container.classList.add("hit");
+        setTimeout(
+            () => this.#htmlElements.container.classList.remove("hit"),
+            100
+        );
+    }
+
+    #updateLivesText() {
+        this.#htmlElements.lives.textContent = `Score: ${this.#lives}`;
     }
 }
 
