@@ -81,6 +81,7 @@ body {
 .spaceship {
     width: var(--size-unit);
     height: var(--size-unit);
+    position: fixed;
     background-image: url("../images/ship.png");
     animation: move-8-units-X var(--ships-animation-time) steps(8) infinite;
 }
